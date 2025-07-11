@@ -1,0 +1,5 @@
+device_id: "replay-edge-001"
+backend_url: "https://api.example.com"
+recording_time: 3600
+auth_token: "jwt-token"
+storage_path: "/recordings"
