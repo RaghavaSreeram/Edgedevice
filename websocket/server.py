@@ -1,4 +1,25 @@
-import asyncio, websockets
-async def handler(ws, path): await ws.send("WebSocket signaling active")
-def run(): asyncio.get_event_loop().run_until_complete(websockets.serve(handler, "0.0.0.0", 8765)); asyncio.get_event_loop().run_forever()
-if __name__ == "__main__": run()
+import asyncio
+import websockets
+import json
+
+connected_clients = set()
+
+async def handler(websocket, path):
+    connected_clients.add(websocket)
+    try:
+        async for message in websocket:
+            data = json.loads(message)
+            for client in connected_clients:
+                if client != websocket:
+                    await client.send(json.dumps(data))
+    except:
+        pass
+    finally:
+        connected_clients.remove(websocket)
+
+async def main():
+    async with websockets.serve(handler, "0.0.0.0", 8765):
+        await asyncio.Future()
+
+if __name__ == "__main__":
+    asyncio.run(main())

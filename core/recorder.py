@@ -1,4 +1,11 @@
 import subprocess
-def start_recording(rtsp_url, output_file):
-    cmd = ["ffmpeg", "-i", rtsp_url, "-t", "3600", "-vcodec", "copy", output_file]
+import threading
+import os
+
+def start_recording(input_url, output_file):
+    cmd = [
+        "ffmpeg", "-y", "-i", input_url,
+        "-t", "3600", "-vcodec", "h264_v4l2m2m",
+        output_file
+    ]
     return subprocess.Popen(cmd)

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Replay WebRTC Preview</title>
+</head>
+<body>
+  <h1>Live Camera Preview</h1>
+  <video id="video" autoplay playsinline controls></video>
+  <script src="https://unpkg.com/simple-peer@9/simplepeer.min.js"></script>
+  <script>
+    const socket = new WebSocket("ws://" + location.hostname + ":8765");
+    const peer = new SimplePeer({ initiator: true, trickle: false });
+
+    peer.on('signal', data => socket.send(JSON.stringify({ type: "signal", data })));
+    socket.onmessage = msg => {
+      const incoming = JSON.parse(msg.data);
+      if (incoming.type === "signal") peer.signal(incoming.data);
+    };
+    peer.on('stream', stream => {
+      document.getElementById('video').srcObject = stream;
+    });
+  </script>
+</body>
+</html>

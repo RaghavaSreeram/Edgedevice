@@ -1,5 +1,6 @@
 {
+  "camera_id": "court1_cam1",
   "device_id": "replay-edge-001",
-  "auth_token": "test-token",
-  "camera_id": "cam01"
+  "backend_url": "http://localhost:8000",
+  "auth_token": "your-jwt-token"
 }
