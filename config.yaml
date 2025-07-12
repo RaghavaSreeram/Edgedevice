@@ -1,0 +1,26 @@
+
+# Basic configuration for the WebRTC application
+server:
+  host: "0.0.0.0"
+  port: 5000
+  log_level: "INFO"
+
+camera:
+  scan_subnet: "192.168.1.0/24"
+  rtsp_timeout: 5
+  discovery_interval: 30
+
+recording:
+  output_dir: "./recordings"
+  max_file_size: "1GB"
+  segment_duration: 300  # 5 minutes
+
+backend:
+  url: "https://your-backend-url.com"
+  heartbeat_interval: 30
+  upload_enabled: true
+
+storage:
+  max_disk_usage: 85  # percentage
+  cleanup_threshold: 90
+  auto_cleanup: true
