@@ -1,0 +1,5 @@
+device_id: replay-edge-001
+backend_url: http://localhost:8000
+recording_time: 3600
+auth_token: test-token
+storage_path: /recordings
