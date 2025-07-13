@@ -1,11 +1,15 @@
-import subprocess
-import threading
-import os
+import subprocess, os, time
 
-def start_recording(input_url, output_file):
+def start_ffmpeg_record(rtsp_url, output_path, duration=3600):
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     cmd = [
-        "ffmpeg", "-y", "-i", input_url,
-        "-t", "3600", "-vcodec", "h264_v4l2m2m",
-        output_file
+        "ffmpeg", "-y", "-i", rtsp_url,
+        "-t", str(duration), "-vcodec", "copy", output_path
     ]
-    return subprocess.Popen(cmd)
+    print(f"Starting recording: {cmd}")
+    try:
+        subprocess.run(cmd, check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"FFmpeg recording failed: {e}")
+        return False
