@@ -1,63 +1,33 @@
-# config.py
-import os
-from pathlib import Path
-from pydantic import BaseSettings, AnyHttpUrl, Field, validator
+# Edge Device Configuration
+device_id: "replay-edge-001"
+backend_url: "http://localhost:8000"
 
-class Settings(BaseSettings):
-    # ───────────────────────────────────────────
-    # Server
-    host: str = Field("0.0.0.0", description="Address to bind web server")
-    port: int = Field(5000, ge=1, lt=65536, description="Port for web server")
-    log_level: str = Field("INFO", regex="^(DEBUG|INFO|WARNING|ERROR|CRITICAL)$")
-    
-    # ───────────────────────────────────────────
-    # Camera Discovery
-    scan_subnet: str = Field("192.168.1.0/24", description="CIDR for camera scan")
-    rtsp_timeout: int = Field(5, ge=1)
-    discovery_interval: int = Field(30, ge=5)
-    
-    # ───────────────────────────────────────────
-    # Recording
-    output_dir: Path = Field(Path("./recordings"), description="Where to save clips")
-    max_file_size: str = Field("1GB")  # you can parse this in your code
-    segment_duration: int = Field(300, description="Seconds per file")
-    
-    # ───────────────────────────────────────────
-    # Backend & Storage
-    backend_url: AnyHttpUrl                            # REQUIRED
-    api_key: str = Field(..., env="API_KEY")           # REQUIRED from env
-    heartbeat_interval: int = Field(30, ge=10)
-    upload_enabled: bool = True
-    
-    max_disk_usage: int = Field(85, ge=0, le=100)
-    cleanup_threshold: int = Field(90, ge=0, le=100)
-    auto_cleanup: bool = True
+# Server Configuration
+server:
+  host: "0.0.0.0"
+  port: 5000
+  log_level: "INFO"
 
-    class Config:
-        # automatically read a .env file if present
-        env_file = os.getenv("ENV_FILE", ".env")
-        env_file_encoding = "utf-8"
-        case_sensitive = False
-    
-    @validator("output_dir", pre=True)
-    def ensure_dir(cls, v):
-        p = Path(v)
-        p.mkdir(parents=True, exist_ok=True)
-        return p
+# Camera Discovery
+camera:
+  scan_subnet: "192.168.1.0/24"
+  rtsp_timeout: 5
+  discovery_interval: 30
 
-# In your application entrypoint
-from config import Settings
+# Recording Settings
+recording:
+  output_dir: "./recordings"
+  max_file_size: "1GB"
+  segment_duration: 300
 
-def main():
-    try:
-        settings = Settings(
-            _env_file=os.getenv("ENV_FILE", ".env"),
-            _env_file_encoding="utf-8",
-            # optionally also read YAML
-            **Settings.parse_yaml(".config/config.yaml")  
-        )
-    except ValidationError as e:
-        print("Configuration error:", e)
-        sys.exit(1)
+# Backend Integration
+backend:
+  heartbeat_interval: 30
+  upload_enabled: true
+  api_key: "${API_KEY}"
 
-    # now use settings.host, settings.backend_url, etc.
+# Storage Management
+storage:
+  max_disk_usage: 85
+  cleanup_threshold: 90
+  auto_cleanup: true

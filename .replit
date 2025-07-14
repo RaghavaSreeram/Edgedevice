@@ -1,3 +1,4 @@
+
 modules = ["python-3.12", "bash", "web"]
 run = "python main.py"
 
@@ -22,8 +23,8 @@ args = "python main.py"
 
 [[ports]]
 localPort = 5000
-externalPort = 5000
+externalPort = 80
 
 [[ports]]
-localPort = 8765
-externalPort = 80
+localPort = 5000
+externalPort = 5000
