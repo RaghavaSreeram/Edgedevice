@@ -1,12 +1,12 @@
 modules = ["python-3.12", "bash", "web"]
-run = "python undefined"
+run = "python main.py"
 
 [nix]
 channel = "stable-24_05"
 packages = ["ffmpeg-full", "libyaml"]
 
 [deployment]
-run = ["sh", "-c", "python undefined"]
+run = ["sh", "-c", "python main.py"]
 
 [workflows]
 runButton = "Main Application"
@@ -18,4 +18,4 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python server.py"
+args = "python main.py"
