@@ -1,4 +1,4 @@
-# Re-Play Edge Device Software v9
+# Re-Play Edge Device Software v13
 
 ## Overview
 This is the edge software for capturing, previewing, and uploading sports videos from local Raspberry Pi-based setups.
