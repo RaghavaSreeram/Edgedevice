@@ -13,3 +13,12 @@ def scan_subnet(subnet="192.168.1.", port=554):
         finally:
             s.close()
     return active_hosts
+
+import socket
+
+def is_port_open(ip, port=554, timeout=2):
+    try:
+        with socket.create_connection((ip, port), timeout=timeout):
+            return True
+    except:
+        return False
