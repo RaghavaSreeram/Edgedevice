@@ -1,24 +1,22 @@
-import asyncio
-import websockets
-import json
 
-connected_clients = set()
+import asyncio, websockets, json, logging
 
-async def handler(websocket, path):
-    connected_clients.add(websocket)
+clients = set()
+logging.basicConfig(level=logging.INFO)
+
+async def client_handler(websocket, path):
+    clients.add(websocket)
     try:
-        async for message in websocket:
-            data = json.loads(message)
-            for client in connected_clients:
-                if client != websocket:
-                    await client.send(json.dumps(data))
-    except:
-        pass
+        async for msg in websocket:
+            data = json.loads(msg)
+            await asyncio.gather(*[c.send(msg) for c in clients if c != websocket])
+    except Exception as e:
+        logging.error(f"WebSocket error: {e}")
     finally:
-        connected_clients.remove(websocket)
+        clients.discard(websocket)
 
 async def main():
-    async with websockets.serve(handler, "0.0.0.0", 8765):
+    async with websockets.serve(client_handler, "0.0.0.0", 8765):
         await asyncio.Future()
 
 if __name__ == "__main__":
