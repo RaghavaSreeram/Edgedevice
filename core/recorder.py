@@ -14,3 +14,12 @@ def start_ffmpeg_record(rtsp_url, output_path, duration=3600):
     except subprocess.CalledProcessError as e:
         print(f"Recording failed: {e}")
         return False
+
+import socket
+
+def is_port_open(ip, port=554, timeout=2):
+    try:
+        with socket.create_connection((ip, port), timeout=timeout):
+            return True
+    except:
+        return False
