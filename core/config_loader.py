@@ -1,56 +1,45 @@
+# config_loader.py – Merges YAML + QR configuration into unified config
+
 import os
 import yaml
 import json
-from collections.abc import Mapping
+import logging
 
-def deep_merge(a: dict, b: dict) -> dict:
-    """Recursively merge b into a, returning a new dict."""
-    result = dict(a)
-    for key, val in b.items():
-        if (
-            key in result 
-            and isinstance(result[key], Mapping) 
-            and isinstance(val, Mapping)
-        ):
-            result[key] = deep_merge(result[key], val)
+def load_yaml_config(yaml_path):
+    if not os.path.exists(yaml_path):
+        raise FileNotFoundError(f"YAML config not found at {yaml_path}")
+    with open(yaml_path, 'r') as f:
+        return yaml.safe_load(f)
+
+def load_qr_config(qr_path):
+    if not os.path.exists(qr_path):
+        return {}
+    with open(qr_path, 'r') as f:
+        try:
+            return json.load(f)
+        except json.JSONDecodeError:
+            logging.warning("QR config is not valid JSON. Skipping.")
+            return {}
+
+def merge_configs(base_config, override_config):
+    """Override YAML with QR values where provided"""
+    result = base_config.copy()
+    for key, value in override_config.items():
+        if isinstance(value, dict) and key in result:
+            result[key] = merge_configs(result.get(key, {}), value)
         else:
-            result[key] = val
+            result[key] = value
     return result
 
-def load_file(path: str, required: bool = False) -> dict:
-    """
-    Load a single config file (YAML or JSON).
-    If required but missing, raises FileNotFoundError.
-    Otherwise returns {} when absent.
-    """
-    if not os.path.exists(path):
-        if required:
-            raise FileNotFoundError(f"Config not found: {path}")
-        return {}
-    with open(path) as f:
-        if path.lower().endswith((".yaml", ".yml")):
-            return yaml.safe_load(f) or {}
-        elif path.lower().endswith(".json"):
-            return json.load(f)
-        else:
-            raise ValueError(f"Unsupported config format: {path}")
+def load_config(yaml_path, qr_path):
+    yaml_config = load_yaml_config(yaml_path)
+    qr_config = load_qr_config(qr_path)
+    merged = merge_configs(yaml_config, qr_config)
 
-def load_config(
-    files: list[str] = ["/config/config.yaml", "/config/qr_config.json"],
-    required: list[str] = ["/config/config.yaml"],
-) -> dict:
-    """
-    Load and merge multiple config files.
+    # Validate required fields
+    required = ["device_id", "backend_url"]
+    for field in required:
+        if field not in merged:
+            raise ValueError(f"Missing required config field: {field}")
 
-    Args:
-      files:    List of file paths to load, in merge order.
-      required: Subset of `files` that must exist or we’ll error.
-
-    Returns:
-      A single dict with all configs deep-merged.
-    """
-    merged: dict = {}
-    for path in files:
-        cfg = load_file(path, required=path in required)
-        merged = deep_merge(merged, cfg)
     return merged
