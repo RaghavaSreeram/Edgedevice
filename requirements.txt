@@ -1,9 +1,0 @@
-flask
-requests
-onvif-zeep
-websockets
-pyyaml
-ffmpeg-python
-aiortc
-prometheus_client
-psutil
