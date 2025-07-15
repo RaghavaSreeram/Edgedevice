@@ -1,0 +1,12 @@
+
+# Core dependencies
+asyncio-mqtt==0.16.1
+opencv-python==4.8.1.78
+python-onvif-zeep==0.2.12
+websockets==11.0.3
+PyYAML==6.0.1
+requests==2.31.0
+
+# Optional but recommended
+Pillow==10.0.1
+numpy==1.24.3
