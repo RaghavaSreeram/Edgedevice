@@ -1,8 +1,54 @@
-[Unit]
-Description=Replay Edge REST API
-[Service]
-ExecStart=/usr/bin/python3 /home/pi/replay/api/server.py
-Restart=always
-User=pi
-[Install]
-WantedBy=multi-user.target
+# api_server.py – FastAPI control endpoints for EdgeDevice
+
+import logging
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
+import uvicorn
+import asyncio
+
+logger = logging.getLogger("api")
+
+app = FastAPI()
+recorder_mgr = None
+uploader_mgr = None
+
+@app.get("/status")
+def get_status():
+    return {"status": "running"}
+
+@app.post("/start")
+def start_recording():
+    # This could trigger a future implementation
+    return {"message": "Recording start trigger received."}
+
+@app.post("/stop")
+def stop_recording():
+    return {"message": "Recording stop trigger received."}
+
+@app.get("/recordings")
+def list_recordings():
+    from os import listdir
+    from os.path import isfile, join
+    path = "./recordings"
+    files = [f for f in listdir(path) if isfile(join(path, f)) and f.endswith(".mp4")]
+    return {"files": files}
+
+async def start_api_server(config, recorder, uploader):
+    global recorder_mgr, uploader_mgr
+    recorder_mgr = recorder
+    uploader_mgr = uploader
+    config_host = config.get("api", {}).get("host", "0.0.0.0")
+    config_port = config.get("api", {}).get("port", 8000)
+    config_reload = config.get("api", {}).get("reload", False)
+
+    config_uvicorn = {
+        "app": "core.modules.api_server:app",
+        "host": config_host,
+        "port": config_port,
+        "reload": config_reload,
+        "log_level": "info"
+    }
+    config_str = f"{config_uvicorn['app']} on {config_uvicorn['host']}:{config_uvicorn['port']}"
+    logger.info(f"🚀 Starting FastAPI Server at {config_str}")
+
+    await asyncio.to_thread(lambda: uvicorn.run(**config_uvicorn))
