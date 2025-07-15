@@ -1,8 +1,0 @@
-[Unit]
-Description=Replay WS Server
-[Service]
-ExecStart=/usr/bin/python3 /home/pi/replay/websocket/server.py
-Restart=always
-User=pi
-[Install]
-WantedBy=multi-user.target
