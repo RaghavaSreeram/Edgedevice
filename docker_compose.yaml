@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  edge-core:
+    build: .
+    container_name: replay-edge-core
+    restart: always
+    network_mode: host
+    volumes:
+      - ./recordings:/app/recordings
+      - ./config:/app/config
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python main.py
+
+  edge-api:
+    build: .
+    container_name: replay-edge-api
+    restart: always
+    network_mode: host
+    depends_on:
+      - edge-core
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python -m core.modules.api_server
+
+  edge-ws:
+    build: .
+    container_name: replay-edge-ws
+    restart: always
+    network_mode: host
+    depends_on:
+      - edge-core
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python -m core.modules.signaling_server

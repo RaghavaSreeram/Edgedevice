@@ -1,0 +1,9 @@
+aiortc==1.4.0
+opencv-python==4.10.0.82
+fastapi==0.110.0
+uvicorn==0.29.0
+websockets==12.0
+PyYAML==6.0.1
+requests==2.31.0
+nmap==0.0.1
+python-multipart==0.0.9

@@ -1,0 +1,53 @@
+# Contributing to Re-Play EdgeDevice
+
+We welcome contributions to improve the Re-Play EdgeDevice system!
+
+## 📋 Guidelines
+
+### 1. Fork and Clone
+```bash
+git clone https://github.com/YOUR_USERNAME/Edgedevice.git
+cd Edgedevice
+```
+
+### 2. Setup Environment
+```bash
+./install.sh
+```
+
+### 3. Make Your Changes
+- Follow PEP8 Python style
+- Include logging for all services
+- Avoid breaking compatibility with main.py
+- Document changes in README.md if new features are added
+
+### 4. Test Your Changes
+```bash
+make restart
+make logs
+```
+
+### 5. Commit Guidelines
+- Use clear and concise commit messages
+- Include prefix: `[Feature]`, `[Fix]`, `[Refactor]`, `[Docs]`
+
+### 6. Pull Request
+- Push your branch and open a PR
+- Describe the motivation, feature, and testing done
+- Reference any related issues
+
+---
+
+## 🔧 Dev Checklist
+- [ ] Code runs without traceback
+- [ ] Logging messages added
+- [ ] API endpoints tested
+- [ ] Configuration handled via config loader
+- [ ] Docker container or systemd support maintained
+
+---
+
+## 💬 Contact
+Need help? Reach out via GitHub Discussions or Issues tab.
+
+Thanks for helping build the future of sports analytics!
